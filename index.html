@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baraka Transfert — Simulateur Gabon ⇄ Maroc</title>
+<style>
+  :root{
+    --green-deep:#0B5C36;
+    --green-mid:#0F7A46;
+    --gold:#E3A72E;
+    --gold-light:#F4C84B;
+    --ink:#12261C;
+    --paper:#FBF9F4;
+    --line:#E4DFD0;
+    --white:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.5;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:24px 18px 60px;}
+
+  header{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:18px 0 26px;
+  }
+  .logo-badge{
+    width:42px;height:42px;border-radius:50%;
+    background:linear-gradient(135deg,var(--green-deep),var(--green-mid));
+    display:flex;align-items:center;justify-content:center;
+    color:var(--gold-light);font-weight:800;font-size:22px;
+    box-shadow:0 2px 6px rgba(11,92,54,.35);
+  }
+  header .brand{font-size:19px;font-weight:700;letter-spacing:.2px;color:var(--green-deep);}
+  header .brand span{color:var(--gold);}
+
+  .card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 10px 30px rgba(11,92,54,.06);
+  }
+
+  .route{
+    display:flex;align-items:center;justify-content:center;gap:14px;
+    margin-bottom:22px;
+  }
+  .flag-pill{
+    display:flex;align-items:center;gap:8px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:7px 14px 7px 7px;
+    font-weight:600;font-size:14px;
+  }
+  .flag{width:26px;height:26px;border-radius:50%;overflow:hidden;flex:0 0 auto;border:1px solid rgba(0,0,0,.08);}
+  .flag svg{display:block;width:100%;height:100%;}
+
+  #swapBtn{
+    width:38px;height:38px;border-radius:50%;border:none;
+    background:var(--gold);color:var(--green-deep);
+    font-size:16px;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .18s ease;
+    box-shadow:0 3px 8px rgba(227,167,46,.4);
+  }
+  #swapBtn:hover{transform:rotate(180deg);}
+  #swapBtn:focus-visible{outline:2px solid var(--green-deep);outline-offset:2px;}
+
+  .field-label{font-size:13px;font-weight:600;color:#5B6B60;margin-bottom:6px;}
+  .input-row{
+    display:flex;align-items:center;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:4px 6px 4px 14px;
+    margin-bottom:18px;
+    transition:border-color .15s ease;
+    background:var(--paper);
+  }
+  .input-row:focus-within{border-color:var(--green-mid);}
+  .input-row input{
+    flex:1;border:none;background:transparent;
+    font-size:22px;font-weight:700;color:var(--ink);
+    padding:10px 4px;outline:none;
+    min-width:0;
+  }
+  .currency-tag{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:6px 10px;font-size:13px;font-weight:700;
+    color:var(--green-deep);white-space:nowrap;
+  }
+  .hint{font-size:12px;color:#8A8A7A;margin:-10px 0 18px 2px;}
+
+  .divider-arrow{
+    display:flex;align-items:center;gap:10px;margin:4px 0 18px;
+  }
+  .divider-arrow::before,.divider-arrow::after{
+    content:"";flex:1;height:1px;background:var(--line);
+  }
+  .divider-arrow span{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--green-deep);color:var(--gold-light);
+    display:flex;align-items:center;justify-content:center;font-size:15px;
+  }
+
+  .result{
+    background:linear-gradient(135deg,var(--green-deep),var(--green-mid));
+    border-radius:14px;
+    padding:20px;color:var(--white);
+    text-align:center;
+    margin-bottom:16px;
+  }
+  .result .label{font-size:13px;opacity:.85;margin-bottom:4px;}
+  .result .amount{font-size:30px;font-weight:800;color:var(--gold-light);}
+  .result .amount span{font-size:16px;font-weight:600;margin-left:4px;color:var(--white);opacity:.9;}
+
+  .breakdown{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    font-size:13px;
+  }
+  .breakdown .item{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px;
+  }
+  .breakdown .item b{display:block;color:var(--green-deep);font-size:15px;margin-top:2px;}
+
+  .rate-note{
+    text-align:center;font-size:12px;color:#8A8A7A;margin-top:16px;
+  }
+
+  .tariffs{
+    margin-top:22px;
+  }
+  .tariffs h2{font-size:15px;color:var(--green-deep);margin-bottom:10px;}
+  .tier{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 12px;border-bottom:1px solid var(--line);
+    font-size:13px;
+  }
+  .tier:last-child{border-bottom:none;}
+  .tier .pct{
+    background:var(--gold);color:var(--green-deep);
+    border-radius:999px;padding:2px 10px;font-weight:800;font-size:13px;
+  }
+  .tier.active{background:#FBF3DD;border-radius:8px;}
+
+  footer{
+    text-align:center;font-size:12px;color:#8A8A7A;margin-top:28px;
+  }
+  @media (max-width:400px){
+    .result .amount{font-size:25px;}
+    .breakdown{grid-template-columns:1fr;}
+  }
+  .detail{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;}
+  .detail h3{font-size:14px;color:var(--green-deep);margin-bottom:6px;}
+  .drow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px;}
+  .drow:last-child{border-bottom:none;}
+  .drow b{color:var(--ink);font-size:14px;text-align:right;}
+  .drow b.neg{color:#B3261E;}
+  .drow.total{font-weight:700;}
+  .drow.total b{color:var(--green-deep);font-size:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo-badge">B</div>
+    <div class="brand">Baraka <span>Transfert</span></div>
+  </header>
+
+  <div class="card">
+
+    <div class="route">
+      <div class="flag-pill" id="fromPill">
+        <span class="flag" id="fromFlag"></span>
+        <span id="fromLabel">Gabon</span>
+      </div>
+      <button id="swapBtn" aria-label="Inverser le sens du transfert">⇄</button>
+      <div class="flag-pill" id="toPill">
+        <span class="flag" id="toFlag"></span>
+        <span id="toLabel">Maroc</span>
+      </div>
+    </div>
+
+    <div class="field-label" id="sendLabel">Vous envoyez</div>
+    <div class="input-row">
+      <input type="text" inputmode="numeric" id="amountInput" value="10 000" aria-label="Montant envoyé">
+      <span class="currency-tag" id="sendCurrency">FCFA</span>
+    </div>
+    <div class="hint" id="minHint">Montant minimum : 5 000 FCFA</div>
+
+    <div class="divider-arrow"><span>↓</span></div>
+
+    <div class="result">
+      <div class="label">Le destinataire reçoit</div>
+      <div class="amount" id="receivedAmount">0<span id="receiveCurrency">MAD</span></div>
+    </div>
+
+    <div class="detail">
+      <h3>Détail de l'opération</h3>
+      <div class="drow"><span>Montant envoyé</span><b id="dSent">—</b></div>
+      <div class="drow"><span id="dFeeLabel">Frais</span><b id="dFee" class="neg">—</b></div>
+      <div class="drow"><span>Montant net converti</span><b id="dNet">—</b></div>
+      <div class="drow"><span>Taux appliqué</span><b id="dRate">—</b></div>
+      <div class="drow total"><span>Le destinataire reçoit</span><b id="dRecv">—</b></div>
+    </div>
+  </div>
+
+  <div class="card tariffs">
+    <h2>Plus vous envoyez, moins vous payez de frais</h2>
+    <div class="tier" id="tier1"><span>5 000 – 99 999 FCFA</span><span class="pct">6%</span></div>
+    <div class="tier" id="tier2"><span>100 000 – 299 999 FCFA</span><span class="pct">4%</span></div>
+    <div class="tier" id="tier3"><span>300 000 – 500 000 FCFA</span><span class="pct">2%</span></div>
+    <div class="tier" id="tier4"><span>Plus de 500 000 FCFA</span><span class="pct">1%</span></div>
+  </div>
+
+  <footer>
+    © Baraka Transfert — Votre argent, notre priorité.<br>
+    Simulation indicative, non contractuelle. Taux confirmé en agence le jour de l'envoi.
+  </footer>
+
+</div>
+
+<script>
+  // ---- Flags (SVG) ----
+  const gabonFlag = `<svg viewBox="0 0 3 2" preserveAspectRatio="none">
+    <rect width="3" height="2" fill="#3A75C4"/>
+    <rect width="3" height="0.667" y="0" fill="#009E60"/>
+    <rect width="3" height="0.667" y="0.667" fill="#FCD116"/>
+    <rect width="3" height="0.666" y="1.334" fill="#3A75C4"/>
+  </svg>`;
+  const moroccoFlag = `<svg viewBox="0 0 5 5">
+    <rect width="5" height="5" fill="#C1272D"/>
+    <g fill="none" stroke="#006233" stroke-width="0.18">
+      <path d="M2.5 1.1 L2.95 2.35 L1.85 1.6 L3.15 1.6 L2.05 2.35 Z"/>
+    </g>
+  </svg>`;
+
+  document.getElementById('fromFlag').innerHTML = gabonFlag;
+  document.getElementById('toFlag').innerHTML = moroccoFlag;
+
+  // ---- State ----
+  const RATE_XAF_TO_MAD = 0.015;             // 1 FCFA = 0,015 MAD
+  const RATE_MAD_TO_XAF = 1 / RATE_XAF_TO_MAD;
+  let direction = 'toMaroc'; // 'toMaroc' = Gabon -> Maroc, 'toGabon' = Maroc -> Gabon
+
+  const amountInput = document.getElementById('amountInput');
+  const sendCurrency = document.getElementById('sendCurrency');
+  const receiveCurrency = document.getElementById('receiveCurrency');
+  const receivedAmount = document.getElementById('receivedAmount');
+  const minHint = document.getElementById('minHint');
+  const sendLabel = document.getElementById('sendLabel');
+  const fromFlag = document.getElementById('fromFlag');
+  const toFlag = document.getElementById('toFlag');
+  const fromLabel = document.getElementById('fromLabel');
+  const toLabel = document.getElementById('toLabel');
+  const tiers = [
+    {id:'tier1', min:5000, max:99999, pct:0.06},
+    {id:'tier2', min:100000, max:299999, pct:0.04},
+    {id:'tier3', min:300000, max:500000, pct:0.02},
+    {id:'tier4', min:500001, max:Infinity, pct:0.01},
+  ];
+
+  function parseAmount(str){
+    const clean = str.replace(/[^\d]/g, '');
+    return clean ? parseInt(clean, 10) : 0;
+  }
+  function formatNumber(n){
+    return Math.round(n).toLocaleString('fr-FR').replace(/,/g, ' ');
+  }
+  function formatDecimal(n){
+    return n.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function getFeeTier(amountXAF){
+    for(const t of tiers){
+      if(amountXAF >= t.min && amountXAF <= t.max) return t;
+    }
+    if(amountXAF < 5000) return null;
+    return tiers[tiers.length-1];
+  }
+
+  function highlightTier(tier){
+    tiers.forEach(t => document.getElementById(t.id).classList.remove('active'));
+    if(tier) document.getElementById(tier.id).classList.add('active');
+  }
+
+  function calculate(){
+    const raw = parseAmount(amountInput.value);
+    const toMaroc = direction === 'toMaroc';
+    const sCur = toMaroc ? 'FCFA' : 'MAD';
+    const rCur = toMaroc ? 'MAD' : 'FCFA';
+    const $ = id => document.getElementById(id);
+
+    // Palier de frais choisi d'après l'équivalent en FCFA
+    const amountXAF = toMaroc ? raw : raw * RATE_MAD_TO_XAF;
+    const tier = getFeeTier(amountXAF);
+    highlightTier(tier);
+
+    $('dRate').textContent = toMaroc ? '1 FCFA = 0,015 MAD' : '1 MAD = 66,67 FCFA';
+
+    if(!tier || raw <= 0){
+      receivedAmount.innerHTML = `0<span>${rCur}</span>`;
+      $('dSent').textContent = raw > 0 ? formatNumber(raw) + ' ' + sCur : '—';
+      $('dFeeLabel').textContent = 'Frais';
+      $('dFee').textContent = '—'; $('dNet').textContent = '—'; $('dRecv').textContent = '—';
+      return;
+    }
+
+    const fee = Math.round(raw * tier.pct);   // frais en monnaie d'envoi, arrondi à l'entier
+    const net = raw - fee;                    // montant net converti
+    const received = toMaroc
+      ? Math.floor(net * RATE_XAF_TO_MAD + 1e-6)   // FCFA -> MAD
+      : Math.floor(net * RATE_MAD_TO_XAF + 1e-6);  // MAD -> FCFA
+
+    receivedAmount.innerHTML = `${formatNumber(received)}<span>${rCur}</span>`;
+    $('dSent').textContent = formatNumber(raw) + ' ' + sCur;
+    $('dFeeLabel').textContent = 'Frais (' + Math.round(tier.pct*100) + ' %)';
+    $('dFee').textContent = '− ' + formatNumber(fee) + ' ' + sCur;
+    $('dNet').textContent = formatNumber(net) + ' ' + sCur;
+    $('dRecv').textContent = formatNumber(received) + ' ' + rCur;
+  }
+
+  function updateDirectionUI(){
+    if(direction === 'toMaroc'){
+      fromFlag.innerHTML = gabonFlag; fromLabel.textContent = 'Gabon';
+      toFlag.innerHTML = moroccoFlag; toLabel.textContent = 'Maroc';
+      sendCurrency.textContent = 'FCFA';
+      receiveCurrency.textContent = 'MAD';
+      sendLabel.textContent = 'Vous envoyez';
+      minHint.textContent = 'Montant minimum : 5 000 FCFA';
+      amountInput.value = '10 000';
+    } else {
+      fromFlag.innerHTML = moroccoFlag; fromLabel.textContent = 'Maroc';
+      toFlag.innerHTML = gabonFlag; toLabel.textContent = 'Gabon';
+      sendCurrency.textContent = 'MAD';
+      receiveCurrency.textContent = 'FCFA';
+      sendLabel.textContent = 'Vous envoyez';
+      minHint.textContent = 'Montant minimum : 80 MAD (≈ 5 000 FCFA)';
+      amountInput.value = '150';
+    }
+    calculate();
+  }
+
+  amountInput.addEventListener('input', () => {
+    let v = parseAmount(amountInput.value);
+    amountInput.value = v ? formatNumber(v) : '';
+    calculate();
+  });
+
+  document.getElementById('swapBtn').addEventListener('click', () => {
+    direction = direction === 'toMaroc' ? 'toGabon' : 'toMaroc';
+    updateDirectionUI();
+  });
+
+  calculate();
+</script>
+</body>
+</html>
